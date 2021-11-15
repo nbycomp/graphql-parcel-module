@@ -55,15 +55,15 @@ export const plugin: PluginFunction = async (
   const mappedDocuments: { [fileName: string]: OperationDefinitionNode[] } = documents.reduce(
     (prev, documentRecord) => {
       const fileName = useRelative
-        ? relative(process.cwd(), documentRecord.location)
-        : basename(documentRecord.location);
+        ? relative(process.cwd(), documentRecord.location!)
+        : basename(documentRecord.location!);
 
       if (!prev[fileName]) {
         prev[fileName] = [];
       }
 
       prev[fileName].push(
-        ...documentRecord.document.definitions.filter(
+        ...documentRecord.document!.definitions.filter(
           document => document.kind === 'OperationDefinition' || document.kind === 'FragmentDefinition'
         )
       );
@@ -80,9 +80,9 @@ export const plugin: PluginFunction = async (
 
       return `
 declare module '${prefix}${modulePathPrefix}${fileName}' {
-  const ${operations[0].name.value}: string;
+  const ${operations[0].name?.value}: string;
 
-  export default ${operations[0].name.value};
+  export default ${operations[0].name?.value};
 }
     `;
     })
